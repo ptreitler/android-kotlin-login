@@ -30,6 +30,7 @@ import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
+import com.example.android.firebaseui_login_sample.LoginViewModel.AuthenticationState.AUTHENTICATED
 import com.example.android.firebaseui_login_sample.databinding.*
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -66,6 +67,14 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         navController = findNavController()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            navController.popBackStack(R.id.mainFragment, false)
+        }
+
+        viewModel.authenticationState.observe(viewLifecycleOwner, Observer { authenticationState ->
+            if (authenticationState == AUTHENTICATED) navController.popBackStack()
+        })
     }
 
     private fun launchSignInFlow() {
